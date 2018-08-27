@@ -1,6 +1,6 @@
-﻿namespace Calculator1
+﻿namespace Calculator
 {
-    partial class Calc_Form
+    partial class CalcForm
     {
         /// <summary>
         /// Required designer variable.
@@ -367,7 +367,7 @@
             this.Controls.Add(this.Multiplication_Inverse);
             this.Controls.Add(this.Modulo);
             this.Controls.Add(this.TxtBox);
-            this.Name = "Calc_Form";
+            this.Name = "CalcForm";
             this.Text = "Calculator";
             this.ResumeLayout(false);
             this.PerformLayout();

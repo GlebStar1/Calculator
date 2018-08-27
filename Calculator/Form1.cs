@@ -1,42 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Calculator1
+namespace Calculator
 {
-
-
-    public partial class Calc_Form : Form
+    public partial class CalcForm : Form
     {
-        Double result_value = 0;
-        String operator_perf = "";
-        bool boloperator_perf = false;
-        bool infinity_check = false;
-        bool equalclick = false;
-        bool cannot_div_by_zero = false;
+        Double _resultValue;
+        String _operatorPerf = "";
+        bool _boloperatorPerf;
+        bool _infinityCheck;
+        bool _equalclick;
+        bool _cannotDivByZero;
 
-        public Calc_Form()
+        public CalcForm()
         {
             InitializeComponent();
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
         }
 
 
         private void Button_Click(object sender, EventArgs e)
         {
-            if (!infinity_check)
+            if (!_infinityCheck)
             {
 
-                if ((TxtBox.Text == "0") || (boloperator_perf))
+                if ((TxtBox.Text == "0") || (_boloperatorPerf))
                     TxtBox.Clear();
-                boloperator_perf = false;
+                _boloperatorPerf = false;
                 Button output = (Button)sender;
 
                 if (output.Text == ".")
@@ -44,10 +35,10 @@ namespace Calculator1
                     if (!TxtBox.Text.Contains("."))
                         TxtBox.Text = TxtBox.Text + output.Text;
                 }
-                else if (equalclick == true && result_value >= 0 && cannot_div_by_zero == true)
+                else if (_equalclick && _resultValue >= 0 && _cannotDivByZero)
                 {
                     Global_Clr.PerformClick();
-                    result_value = 0;
+                    _resultValue = 0;
                     Label_Show.Text = "";
                     TxtBox.Text = output.Text;
                 }
@@ -62,33 +53,35 @@ namespace Calculator1
 
         private void Operation_Perf(object sender, EventArgs e)
         {
-            if (!infinity_check)
+            if (!_infinityCheck)
             {
                 Button output = (Button)sender;
 
-                if (result_value != 0)
+                if (_resultValue != 0)
                 {
                     Equal.PerformClick();
-                    operator_perf = output.Text;
-                    Label_Show.Text = result_value + " " + operator_perf;
-                    boloperator_perf = true;
+                    _operatorPerf = output.Text;
+                    Label_Show.Text = _resultValue + " " + _operatorPerf;
+                    _boloperatorPerf = true;
 
                 }
                 else if (TxtBox.Text.Length <= 0)
                 {
                     TxtBox.Text = "0";
-                    result_value = 0;
+                    _resultValue = 0;
                 }
                 else
                 {
-                    operator_perf = output.Text;
-                    result_value = Double.Parse(TxtBox.Text);
-                    Label_Show.Text = result_value + " " + operator_perf;
-                    boloperator_perf = true;
+                    _operatorPerf = output.Text;
+                    _resultValue = Double.Parse(TxtBox.Text);
+                    Label_Show.Text = _resultValue + " " + _operatorPerf;
+                    _boloperatorPerf = true;
                 }
             }
             else
-            { Global_Clr.PerformClick(); }
+            {
+                Global_Clr.PerformClick();
+            }
         }
 
         private void Clr_Entry_Click(object sender, EventArgs e)
@@ -98,99 +91,91 @@ namespace Calculator1
 
         private void Global_Clr_Click(object sender, EventArgs e)
         {
-            infinity_check = false;
+            _infinityCheck = false;
             TxtBox.Text = "0";
-            result_value = 0;
+            _resultValue = 0;
             Label_Show.Text = "";
         }
 
         private void Equal_Click(object sender, EventArgs e)
         {
 
-            if (!infinity_check)
+            if (!_infinityCheck)
             {
-                switch (operator_perf)
+                switch (_operatorPerf)
                 {
 
                     case "+":
-                        TxtBox.Text = (result_value + Double.Parse(TxtBox.Text)).ToString();
+                        TxtBox.Text = (_resultValue + Double.Parse(TxtBox.Text)).ToString();
                         break;
                     case "-":
-                        TxtBox.Text = (result_value - Double.Parse(TxtBox.Text)).ToString();
+                        TxtBox.Text = (_resultValue - Double.Parse(TxtBox.Text)).ToString();
                         break;
                     case "÷":
                         if (Double.Parse(TxtBox.Text) == 0)
                         {
                             TxtBox.Text = "Cannot divide by zero";
-                            infinity_check = true;
-                            cannot_div_by_zero = true;
+                            _infinityCheck = true;
+                            _cannotDivByZero = true;
                         }
                         else
-                            TxtBox.Text = (result_value / Double.Parse(TxtBox.Text)).ToString();
+                            TxtBox.Text = (_resultValue / Double.Parse(TxtBox.Text)).ToString();
                         break;
                     case "×":
-                        TxtBox.Text = (result_value * Double.Parse(TxtBox.Text)).ToString();
+                        TxtBox.Text = (_resultValue * Double.Parse(TxtBox.Text)).ToString();
                         break;
                     case "%":
-                        TxtBox.Text = (result_value % Double.Parse(TxtBox.Text)).ToString();
+                        TxtBox.Text = (_resultValue % Double.Parse(TxtBox.Text)).ToString();
                         break;
-                    default:
-                        break;
-                     
-
                 }
             }
             else
             {
-                result_value = 0;
+                _resultValue = 0;
                 TxtBox.Text = "0";
-            } equalclick = true;
+            }
+            _equalclick = true;
 
 
         }
 
         private void PlusMinus_Sign_Click(object sender, EventArgs e)
         {
-            result_value = Double.Parse(TxtBox.Text) * -1;
+            _resultValue = Double.Parse(TxtBox.Text) * -1;
             Label_Show.Text = "";
-            TxtBox.Text = result_value.ToString();
+            TxtBox.Text = _resultValue.ToString();
         }
 
         private void Square_Root_Click(object sender, EventArgs e)
         {
-            result_value = Math.Sqrt(Double.Parse(TxtBox.Text));
+            _resultValue = Math.Sqrt(Double.Parse(TxtBox.Text));
             Label_Show.Text = "√(" + TxtBox.Text + ")";
-            TxtBox.Text = result_value.ToString();
+            TxtBox.Text = _resultValue.ToString();
         }
 
         private void Square_Click(object sender, EventArgs e)
         {
-            result_value = (Double.Parse(TxtBox.Text) * (Double.Parse(TxtBox.Text)));
+            _resultValue = (Double.Parse(TxtBox.Text) * (Double.Parse(TxtBox.Text)));
             Label_Show.Text = "Sqr(" + TxtBox.Text + ")";
-            TxtBox.Text = result_value.ToString();
+            TxtBox.Text = _resultValue.ToString();
         }
 
         private void Multiplication_Inverse_Click(object sender, EventArgs e)
         {
-            result_value = 1 / Double.Parse(TxtBox.Text);
+            _resultValue = 1 / Double.Parse(TxtBox.Text);
             Label_Show.Text = "1/(" + TxtBox.Text + ")";
-            TxtBox.Text = result_value.ToString();
+            TxtBox.Text = _resultValue.ToString();
         }
 
         private void Backspace_Click(object sender, EventArgs e)
         {
             if (TxtBox.Text.Length <= 0)
             {
-
                 TxtBox.Text = "0";
-
-
             }
             else
             {
-
                 TxtBox.Text = TxtBox.Text.Remove(TxtBox.Text.Length - 1, 1);
-
             }
         }
     }
