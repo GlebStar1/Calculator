@@ -6,11 +6,12 @@ namespace Calculator
     public partial class CalcForm : Form
     {
         Double _resultValue;
-        String _operatorPerf = "";
+        String _operatorPerf = string.Empty;
         bool _boloperatorPerf;
         bool _infinityCheck;
         bool _equalclick;
         bool _cannotDivByZero;
+        private double _firstValue;
 
         public CalcForm()
         {
@@ -19,28 +20,43 @@ namespace Calculator
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
         }
 
-
         private void Button_Click(object sender, EventArgs e)
         {
             if (!_infinityCheck)
             {
 
-                if ((TxtBox.Text == "0") || (_boloperatorPerf))
+                if ((TxtBox.Text == Constants.ZeroValue) || (_boloperatorPerf))
                     TxtBox.Clear();
                 _boloperatorPerf = false;
                 Button output = (Button)sender;
 
-                if (output.Text == ".")
+                if (output.Text == Constants.BulletOperator)
                 {
-                    if (!TxtBox.Text.Contains("."))
+                    if (!TxtBox.Text.Contains(Constants.BulletOperator))
                         TxtBox.Text = TxtBox.Text + output.Text;
                 }
-                else if (_equalclick && _resultValue >= 0 && _cannotDivByZero)
+                else if (_equalclick)
                 {
                     Global_Clr.PerformClick();
                     _resultValue = 0;
-                    Label_Show.Text = "";
+                    _firstValue = 0;
+                    Label_Show.Text = string.Empty;
                     TxtBox.Text = output.Text;
+                    _equalclick = false;
+
+
+                }
+                else if (_equalclick && _resultValue <= 0 && _resultValue >=0)
+                {
+                    
+                    _resultValue = _firstValue;
+                    _firstValue = double.Parse(TxtBox.Text);
+                    TxtBox.Text = output.Text;
+                    Label_Show.Text = $"{_firstValue} {_operatorPerf}";
+                    TxtBox.Text = output.Text;
+                    _equalclick = false;
+
+
                 }
                 else
                     TxtBox.Text = TxtBox.Text + output.Text;
@@ -61,20 +77,19 @@ namespace Calculator
                 {
                     Equal.PerformClick();
                     _operatorPerf = output.Text;
-                    Label_Show.Text = _resultValue + " " + _operatorPerf;
+                    Label_Show.Text = $"{_firstValue} {_operatorPerf}";
                     _boloperatorPerf = true;
-
                 }
                 else if (TxtBox.Text.Length <= 0)
                 {
-                    TxtBox.Text = "0";
+                    TxtBox.Text = Constants.ZeroValue;
                     _resultValue = 0;
                 }
                 else
                 {
                     _operatorPerf = output.Text;
-                    _resultValue = Double.Parse(TxtBox.Text);
-                    Label_Show.Text = _resultValue + " " + _operatorPerf;
+                    _firstValue = double.Parse(TxtBox.Text);
+                    Label_Show.Text = $"{_firstValue} {_operatorPerf}";
                     _boloperatorPerf = true;
                 }
             }
@@ -86,57 +101,52 @@ namespace Calculator
 
         private void Clr_Entry_Click(object sender, EventArgs e)
         {
-            TxtBox.Text = "0";
+            TxtBox.Text = Constants.ZeroValue;
         }
 
+      
         private void Global_Clr_Click(object sender, EventArgs e)
         {
-            _infinityCheck = false;
-            TxtBox.Text = "0";
-            _resultValue = 0;
-            Label_Show.Text = "";
+            ValuesToDefault();
         }
 
         private void Equal_Click(object sender, EventArgs e)
         {
-
+            var secondValue = double.Parse(TxtBox.Text);
             if (!_infinityCheck)
             {
                 switch (_operatorPerf)
                 {
-
                     case "+":
-                        TxtBox.Text = (_resultValue + Double.Parse(TxtBox.Text)).ToString();
+                        TxtBox.Text = (_firstValue + secondValue).ToString();
                         break;
                     case "-":
-                        TxtBox.Text = (_resultValue - Double.Parse(TxtBox.Text)).ToString();
+                        TxtBox.Text = (_firstValue - secondValue).ToString();
                         break;
                     case "÷":
-                        if (Double.Parse(TxtBox.Text) == 0)
+                        if (secondValue == 0)
                         {
                             TxtBox.Text = "Cannot divide by zero";
                             _infinityCheck = true;
                             _cannotDivByZero = true;
                         }
                         else
-                            TxtBox.Text = (_resultValue / Double.Parse(TxtBox.Text)).ToString();
+                            TxtBox.Text = (_firstValue / secondValue).ToString();
                         break;
                     case "×":
-                        TxtBox.Text = (_resultValue * Double.Parse(TxtBox.Text)).ToString();
+                        TxtBox.Text = (_firstValue * secondValue).ToString();
                         break;
                     case "%":
-                        TxtBox.Text = (_resultValue % Double.Parse(TxtBox.Text)).ToString();
+                        TxtBox.Text = (_firstValue % secondValue).ToString();
                         break;
                 }
             }
             else
             {
                 _resultValue = 0;
-                TxtBox.Text = "0";
+                TxtBox.Text = string.Empty;
             }
             _equalclick = true;
-
-
         }
 
         private void PlusMinus_Sign_Click(object sender, EventArgs e)
@@ -169,14 +179,24 @@ namespace Calculator
 
         private void Backspace_Click(object sender, EventArgs e)
         {
-            if (TxtBox.Text.Length <= 0)
+            if (int.TryParse(TxtBox.Text, out int result))
             {
-                TxtBox.Text = "0";
+                TxtBox.Text = TxtBox.Text.Length <= 0 ? Constants.ZeroValue : TxtBox.Text.Remove(TxtBox.Text.Length - 1, 1);
             }
             else
             {
-                TxtBox.Text = TxtBox.Text.Remove(TxtBox.Text.Length - 1, 1);
+                TxtBox.Text = Constants.ZeroValue;
             }
+
+        }
+
+        private void ValuesToDefault()
+        {
+            _infinityCheck = false;
+            TxtBox.Text = Constants.ZeroValue;
+            _resultValue = 0;
+            _firstValue = 0;
+            Label_Show.Text = string.Empty;
         }
     }
 }
