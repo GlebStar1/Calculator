@@ -56,7 +56,7 @@ namespace Calculator
                     TxtBox.Text = output.Text;
                     _equalclick = false;
 
-
+                    
                 }
                 else
                     TxtBox.Text = TxtBox.Text + output.Text;
